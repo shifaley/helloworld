@@ -27,5 +27,5 @@ npx vercel --prod
 
 ## Аналитика
 
-Umami Cloud — скрипт в `<head>`, website id `bdef85f4-4c8e-4f7e-a2fb-592a7ad4d88b`.
+Umami Cloud — скрипт в `<head>`, website id `93a247dd-72bf-472e-97a8-a01e0ebe8979`.
 Смена палитры шлёт кастомное событие `mood`. Статистика: https://cloud.umami.is
