@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>hello, world</title>
+<meta name="description" content="A hello world that says hi back." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👋</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #07070c;
+    --ink: #f4f1ea;
+    --a: #ff5f6d;
+    --b: #ffc371;
+    --c: #6a8dff;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding: 24px;
+    transition: background 900ms ease;
+    cursor: crosshair;
+  }
+
+  /* --- ambient light --------------------------------------------------- */
+  .glow {
+    position: fixed;
+    inset: -30vmax;
+    z-index: 0;
+    pointer-events: none;
+    filter: blur(80px);
+    opacity: .55;
+  }
+  .glow i {
+    position: absolute;
+    display: block;
+    width: 55vmax;
+    height: 55vmax;
+    border-radius: 50%;
+    mix-blend-mode: screen;
+    transition: background 900ms ease;
+    will-change: transform;
+  }
+  .glow i:nth-child(1) { background: var(--a); animation: drift1 19s ease-in-out infinite; }
+  .glow i:nth-child(2) { background: var(--c); animation: drift2 23s ease-in-out infinite; }
+  .glow i:nth-child(3) {
+    background: var(--b);
+    width: 34vmax; height: 34vmax;
+    left: 0; top: 0;
+    transform: translate3d(var(--mx, 50vw), var(--my, 50vh), 0) translate(-50%, -50%);
+    transition: transform 700ms cubic-bezier(.2,.8,.2,1), background 900ms ease;
+    opacity: .8;
+  }
+
+  @keyframes drift1 {
+    0%, 100% { transform: translate3d(8vw, 6vh, 0) scale(1); }
+    50%      { transform: translate3d(38vw, 28vh, 0) scale(1.25); }
+  }
+  @keyframes drift2 {
+    0%, 100% { transform: translate3d(48vw, 34vh, 0) scale(1.15); }
+    50%      { transform: translate3d(14vw, 4vh, 0) scale(.9); }
+  }
+
+  /* --- the words -------------------------------------------------------- */
+  main {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(3rem, 17vw, 13rem);
+    line-height: .95;
+    letter-spacing: -.04em;
+    font-weight: 200;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  h1 .line { display: block; }
+
+  h1 span {
+    display: inline-block;
+    font-variation-settings: "wght" calc(180 + var(--f, 0) * 720);
+    transform:
+      translateY(calc(var(--f, 0) * -18px))
+      scale(calc(1 + var(--f, 0) * .18));
+    color: color-mix(in oklab, var(--ink) calc(100% - var(--f, 0) * 100%), var(--hot) calc(var(--f, 0) * 100%));
+    text-shadow: 0 0 calc(var(--f, 0) * 42px) color-mix(in oklab, var(--hot) calc(var(--f, 0) * 75%), transparent);
+    transition: font-variation-settings 260ms ease, transform 260ms cubic-bezier(.2,.9,.2,1), color 260ms ease;
+    will-change: transform, font-variation-settings;
+  }
+
+  h1 span.space { width: .28em; }
+
+  .hint {
+    margin-top: 2.2rem;
+    font-size: clamp(.7rem, 1.6vw, .84rem);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    opacity: .38;
+    user-select: none;
+  }
+  .hint b { font-weight: 600; opacity: .9; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glow i { animation: none; }
+    h1 span { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<main>
+  <h1 id="word" aria-label="hello, world"></h1>
+  <p class="hint">move around · <b>click</b> to change the mood</p>
+</main>
+
+<script>
+(function () {
+  var el = document.getElementById("word");
+  var lines = ["hello,", "world"];
+  var letters = [];
+
+  lines.forEach(function (text, li) {
+    var line = document.createElement("span");
+    line.className = "line";
+    text.split("").forEach(function (ch) {
+      var s = document.createElement("span");
+      if (ch === " ") { s.className = "space"; s.textContent = " "; }
+      else { s.textContent = ch; }
+      s.setAttribute("aria-hidden", "true");
+      line.appendChild(s);
+      letters.push(s);
+    });
+    el.appendChild(line);
+  });
+
+  var boxes = [];
+  function measure() {
+    boxes = letters.map(function (s) {
+      var r = s.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    });
+  }
+  measure();
+  addEventListener("resize", measure);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
+  var RADIUS = 240;
+  var pointer = { x: -9999, y: -9999 };
+  var idle = true;
+  var idleTimer;
+  var frame;
+
+  function paint(t) {
+    frame = requestAnimationFrame(paint);
+    for (var i = 0; i < letters.length; i++) {
+      var f;
+      if (idle) {
+        // gentle breathing wave travelling through the letters
+        f = Math.max(0, Math.sin(t / 620 - i * 0.55)) * 0.42;
+      } else {
+        var dx = pointer.x - boxes[i].x;
+        var dy = pointer.y - boxes[i].y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        f = Math.max(0, 1 - d / RADIUS);
+        f = f * f * (3 - 2 * f); // smoothstep
+      }
+      letters[i].style.setProperty("--f", f.toFixed(3));
+    }
+  }
+  frame = requestAnimationFrame(paint);
+
+  function move(x, y) {
+    pointer.x = x; pointer.y = y;
+    idle = false;
+    document.documentElement.style.setProperty("--mx", x + "px");
+    document.documentElement.style.setProperty("--my", y + "px");
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(function () { idle = true; }, 2200);
+  }
+
+  addEventListener("pointermove", function (e) { move(e.clientX, e.clientY); }, { passive: true });
+  addEventListener("pointerdown", function (e) { move(e.clientX, e.clientY); next(); });
+
+  // --- moods ------------------------------------------------------------
+  var moods = [
+    { bg: "#07070c", ink: "#f4f1ea", a: "#ff5f6d", b: "#ffc371", c: "#6a8dff", hot: "#ffd166" },
+    { bg: "#03121a", ink: "#e6fbff", a: "#00c6a7", b: "#1de9b6", c: "#0077ff", hot: "#5ffbf1" },
+    { bg: "#160016", ink: "#ffe9fb", a: "#b721ff", b: "#ff2e93", c: "#21d4fd", hot: "#ff6ec7" },
+    { bg: "#f6f3ee", ink: "#14100c", a: "#ff9a3c", b: "#ffd08a", c: "#ff5e7e", hot: "#e02f4d" },
+    { bg: "#0b1207", ink: "#eaffd0", a: "#9ae600", b: "#f6ff00", c: "#00b894", hot: "#caff33" }
+  ];
+  var m = 0;
+  function apply() {
+    var p = moods[m], r = document.documentElement.style;
+    r.setProperty("--bg", p.bg);
+    r.setProperty("--ink", p.ink);
+    r.setProperty("--a", p.a);
+    r.setProperty("--b", p.b);
+    r.setProperty("--c", p.c);
+    r.setProperty("--hot", p.hot);
+  }
+  function next() { m = (m + 1) % moods.length; apply(); }
+  apply();
+
+  // keyboard: space / arrows also change the mood
+  addEventListener("keydown", function (e) {
+    if (e.key === " " || e.key === "Enter" || e.key === "ArrowRight") { e.preventDefault(); next(); }
+  });
+
+  // a small hello for whoever opens the console
+  console.log("%c hello, world ", "background:#ff5f6d;color:#fff;font:700 14px/2 system-ui;border-radius:4px");
+})();
+</script>
+</body>
+</html>
