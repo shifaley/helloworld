@@ -10,7 +10,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-TEXT='helowrd, MOVEARUNDCLIKTHG·'
+TEXT='helowrdacfgimnpsy,.:@ MOVEARUNDCLIKTHG·'
 CSS_URL='https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap'
 UA='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
 
