@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+<!-- Umami Cloud analytics -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="bdef85f4-4c8e-4f7e-a2fb-592a7ad4d88b"></script>
 <style>
   :root {
     --bg: #07070c;
@@ -220,7 +222,11 @@
     r.setProperty("--c", p.c);
     r.setProperty("--hot", p.hot);
   }
-  function next() { m = (m + 1) % moods.length; apply(); }
+  function next() {
+    m = (m + 1) % moods.length;
+    apply();
+    if (window.umami) window.umami.track("mood", { mood: m });
+  }
   apply();
 
   // keyboard: space / arrows also change the mood

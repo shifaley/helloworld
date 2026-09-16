@@ -24,3 +24,8 @@ npx vercel --prod
 
 Фреймворк — Other, build command пустой, output directory — корень.
 Либо залить папку на GitHub и в Vercel нажать Import: статика подхватится сама, настраивать нечего.
+
+## Аналитика
+
+Umami Cloud — скрипт в `<head>`, website id `bdef85f4-4c8e-4f7e-a2fb-592a7ad4d88b`.
+Смена палитры шлёт кастомное событие `mood`. Статистика: https://cloud.umami.is
