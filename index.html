@@ -191,9 +191,23 @@
       return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
     });
   }
-  measure();
-  addEventListener("resize", measure);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+  // Reading geometry right after inserting the letters would force a
+  // synchronous layout before the first paint. A rAF callback still runs
+  // before the frame's own layout, so wait for the second one: by then the
+  // browser has laid the page out on its own and the read is free.
+  // The flag doubles as a debounce for resize, which fires in bursts.
+  var queued = false;
+  function scheduleMeasure() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { queued = false; measure(); });
+    });
+  }
+
+  scheduleMeasure();
+  addEventListener("resize", scheduleMeasure);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleMeasure);
 
   var RADIUS = 240;
   var pointer = { x: -9999, y: -9999 };
@@ -205,7 +219,7 @@
     frame = requestAnimationFrame(paint);
     for (var i = 0; i < letters.length; i++) {
       var f;
-      if (idle) {
+      if (idle || !boxes.length) {
         // gentle breathing wave travelling through the letters
         f = Math.max(0, Math.sin(t / 620 - i * 0.55)) * 0.42;
       } else {
